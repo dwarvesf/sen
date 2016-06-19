@@ -1,5 +1,7 @@
 # sen
 
+![](icon.png)
+
 Separated API automation testing made easy
 
 # Usage

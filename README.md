@@ -10,10 +10,25 @@ Separated API automation testing made easy
 
 $ sen --help
 
-Usage: sen [options]
+NAME:
+   sen - A small cli written in Go to help automation test
 
-    --input=                    - input file or directory
-    --output=                   - output directory
+USAGE:
+   sen [global options] command [command options] [arguments...]
+
+VERSION:
+   1.0
+
+AUTHOR(S):
+    <dev@dwarvesf.com>
+
+COMMANDS:
+   help, h	Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --Input file CSV "input"	Input file CSV with given format
+   --help, -h			show help
+   --version, -v		print the version
 
 $ sen testcases.csv
 Running test case: Get new project

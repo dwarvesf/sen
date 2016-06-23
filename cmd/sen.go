@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/codegangsta/cli"
-	"github.com/k0kubun/pp"
 )
 
 var (
@@ -167,7 +166,6 @@ func runningTest(sens []Sen) {
 				}
 
 				if !compareUnknownObject(actualResponseMap[k], expectedResponseMap[k]) {
-					pp.Println(actualResponseMap[k], expectedResponseMap[k])
 					isSame = false
 					break
 				}

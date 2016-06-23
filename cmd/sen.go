@@ -50,7 +50,7 @@ func Action(c *cli.Context) {
 	csvDirectory := c.Args()[0]
 	listData, err := readCSV(csvDirectory)
 	if err != nil {
-		pp.Println("Cannot read csv")
+		fmt.Println("Cannot read csv")
 		os.Exit(1)
 	}
 	runningTest(listData)
@@ -65,16 +65,15 @@ func readCSV(fileName string) ([]Sen, error) {
 	}
 	defer csvFile.Close()
 	reader := csv.NewReader(csvFile)
-	reader.FieldsPerRecord = -1 // see the Reader struct information below
+	reader.FieldsPerRecord = -1
 
 	rawCSVdata, err := reader.ReadAll()
-
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	var listData = []Sen{}
 
+	var listData = []Sen{}
 	for i, each := range rawCSVdata {
 		if i == 0 {
 			continue
@@ -168,6 +167,7 @@ func runningTest(sens []Sen) {
 				}
 
 				if !compareUnknownObject(actualResponseMap[k], expectedResponseMap[k]) {
+					pp.Println(actualResponseMap[k], expectedResponseMap[k])
 					isSame = false
 					break
 				}

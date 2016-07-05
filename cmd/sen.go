@@ -8,10 +8,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 var (
@@ -40,23 +41,42 @@ var Flags = []cli.Flag{
 }
 
 // Action defines the main action for glod-cli
-func Action(c *cli.Context) {
+func Action(c *cli.Context) error {
 	if len(c.Args()) <= 0 {
 		cli.ShowAppHelp(c)
-		return
+		return nil
 	}
 
 	csvDirectory := c.Args()[0]
-	listData, err := readCSV(csvDirectory)
+
+	fileList := []string{}
+	err := filepath.Walk(csvDirectory, func(path string, f os.FileInfo, err error) error {
+		fileList = append(fileList, path)
+		return nil
+	})
+
 	if err != nil {
-		fmt.Println("Cannot read csv")
-		os.Exit(1)
+		return err
 	}
-	runningTest(listData)
-	report()
+
+	for _, v := range fileList {
+		csvSplit := strings.Split(v, ".")
+		if len(csvSplit) < 1 || csvSplit[len(csvSplit)-1] != "csv" {
+			continue
+		}
+		listData, err := readCSV(v)
+		if err != nil {
+			fmt.Println("Cannot read this csv, fileName = " + v)
+		}
+		runningTest(listData)
+		report()
+	}
+	return nil
+
 }
 
 func readCSV(fileName string) ([]Sen, error) {
+	fmt.Println("Running test in file: " + fileName)
 	csvFile, err := os.Open(fileName)
 	if err != nil {
 		fmt.Println(err)

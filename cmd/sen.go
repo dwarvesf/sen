@@ -29,6 +29,7 @@ type Sen struct {
 	Body     string
 	Response string
 	Ignore   []string
+	Status   int
 }
 
 // Flags defines flags of cli
@@ -105,6 +106,14 @@ func readCSV(fileName string) ([]Sen, error) {
 		sen.Body = each[4]
 		sen.Response = each[5]
 		sen.Ignore = strings.Split(each[6], ",")
+		httpStatus, err := strconv.Atoi(each[7])
+		if err != nil {
+			fmt.Println("Http status must be a number")
+			countTestFailed++
+			continue
+		}
+		sen.Status = httpStatus
+
 		listData = append(listData, sen)
 	}
 	return listData, nil
@@ -141,12 +150,19 @@ func runningTest(sens []Sen) {
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode != each.Status {
+			fmt.Println("Test failed")
+			countTestFailed++
+			continue
+		}
+
 		buffer, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			fmt.Println("Cannot read body")
 			countTestFailed++
-			return
+			continue
 		}
+
 		switch each.Method {
 		case "GET":
 			if sanitizeResponse(each.Response) == sanitizeResponse(string(buffer)) {
